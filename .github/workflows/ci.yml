@@ -109,16 +109,20 @@ jobs:
     name: 6. Deploy Infra Terraform
     runs-on: ubuntu-latest
     needs: docker-build-push
+    env:
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_SECRET_ACCESS_KEY: "test"
+      AWS_DEFAULT_REGION: "us-east-1"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup LocalStack
         run: |
-          docker run -d --name localstack --network host localstack/localstack
-          echo "Aguardando 15s para o LocalStack inicializar..."
-          sleep 15
-          curl -s http://127.0.0.1:4566/_localstack/health || true
+          docker run -d --name localstack -p 4566:4566 -e SERVICES=ec2,s3 localstack/localstack:latest
+          echo "Aguardando LocalStack subir..."
+          sleep 20
+          docker logs localstack
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

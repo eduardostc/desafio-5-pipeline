@@ -1,4 +1,3 @@
-# Passo 1 & 2: Provedor e apontamento LocalStack
 terraform {
   required_providers {
     aws = {
@@ -19,6 +18,7 @@ provider "aws" {
 
   endpoints {
     ec2 = "http://127.0.0.1:4566"
+    sts = "http://127.0.0.1:4566"
   }
 }
 
