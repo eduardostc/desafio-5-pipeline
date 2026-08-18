@@ -113,11 +113,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Start LocalStack
-        uses: LocalStack/setup-localstack@v0.2.3
-        with:
-          image-tag: 'latest'
-          use-pro: 'false'
+      - name: Start LocalStack Community
+        run: |
+          docker run -d \
+            --name localstack \
+            -p 4566:4566 \
+            -e SERVICES=ec2 \
+            localstack/localstack:3.0
+          
+          echo "Aguardando LocalStack inicializar..."
+          sleep 12
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
