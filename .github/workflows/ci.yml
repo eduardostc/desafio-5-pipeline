@@ -115,12 +115,10 @@ jobs:
 
       - name: Setup LocalStack
         run: |
-          docker run -d --name localstack -p 127.0.0.1:4566:4566 -p 127.0.0.1:4510-4559:4510-4559 localstack/localstack
-          echo "Aguardando inicializacao do LocalStack..."
-          until curl -s http://127.0.0.1:4566/_localstack/health | grep -q "\"ec2\": \"available\"\\|\"init\""; do
-            sleep 2
-          done
-          echo "LocalStack pronto!"
+          docker run -d --name localstack --network host localstack/localstack
+          echo "Aguardando 15s para o LocalStack inicializar..."
+          sleep 15
+          curl -s http://127.0.0.1:4566/_localstack/health || true
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
