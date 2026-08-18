@@ -119,18 +119,15 @@ jobs:
 
       - name: Setup LocalStack
         run: |
-          docker run -d --name localstack -p 4566:4566 -e SERVICES=ec2,s3 localstack/localstack:latest
-          echo "Aguardando LocalStack subir..."
-          sleep 20
-          docker logs localstack
+          docker run -d --name localstack \
+            -p 4566:4566 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -e SERVICES=ec2 \
+            localstack/localstack:latest
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.0
-
-      - name: Terraform Init & Apply
-        working-directory: ./terraform
-        run: |
-          terraform init
-          terraform apply -auto-approve
+          echo "Aguardando inicializacao completa do LocalStack..."
+          until curl -s http://127.0.0.1:4566/_localstack/health | grep -q '"ec2": "running"\|"ec2": "available"'; do
+            sleep 3
+          done
+          sleep 5
+          echo "LocalStack pronto para receber comandos!"
