@@ -17,12 +17,11 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    ec2 = "http://127.0.0.1:4566"
-    sts = "http://127.0.0.1:4566"
+    ec2 = "http://localhost:4566"
+    sts = "http://localhost:4566"
   }
 }
 
-# Passo 3: Regras de Firewall (Security Group)
 resource "aws_security_group" "app_sg" {
   name        = "app_security_group"
   description = "Permitir trafego para a API Node"
@@ -44,9 +43,8 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-# Passo 4 & 5: Criacao da Instancia EC2 e User Data
 resource "aws_instance" "app_server" {
-  ami                    = "ami-0c55b159cbfafe1f0" # Mock AMI para LocalStack
+  ami                    = "ami-0c55b159cbfafe1f0"
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 
@@ -60,7 +58,7 @@ resource "aws_instance" "app_server" {
               ${file("${path.module}/../package.json")}
               ENTRY
               npm install
-              nohup node src/index.js > app.log 2>&1 &
+              nohup node src/server.js > app.log 2>&1 &
               EOF
 
   tags = {
