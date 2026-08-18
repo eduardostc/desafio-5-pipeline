@@ -117,10 +117,11 @@ jobs:
         run: |
           docker run -d --name localstack -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack
 
+        # 6. Deploy Infra Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.0
+          terraform_version: 1.9.0
 
       - name: Terraform Init & Apply
         working-directory: ./terraform
