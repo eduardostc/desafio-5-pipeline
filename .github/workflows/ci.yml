@@ -104,7 +104,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/desafio5-api:latest
 
-  # 6. Deploy Infra Terraform (LocalStack)
+  # 6. Deploy Infra Terraform
   deploy-infra:
     name: 6. Deploy Infra Terraform
     runs-on: ubuntu-latest
@@ -115,9 +115,13 @@ jobs:
 
       - name: Setup LocalStack
         run: |
-          docker run -d --name localstack -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack
+          docker run -d --name localstack -p 127.0.0.1:4566:4566 -p 127.0.0.1:4510-4559:4510-4559 localstack/localstack
+          echo "Aguardando inicializacao do LocalStack..."
+          until curl -s http://127.0.0.1:4566/_localstack/health | grep -q "\"ec2\": \"available\"\\|\"init\""; do
+            sleep 2
+          done
+          echo "LocalStack pronto!"
 
-        # 6. Deploy Infra Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
