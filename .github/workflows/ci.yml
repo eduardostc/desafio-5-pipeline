@@ -104,7 +104,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/desafio5-api:latest
 
-  # 6. Deploy Infra Terraform (LocalStack via Runner)
+  # 6. Deploy Infra Terraform (LocalStack)
   deploy-infra:
     name: 6. Deploy Infra Terraform
     runs-on: ubuntu-latest
